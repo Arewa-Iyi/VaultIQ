@@ -106,6 +106,8 @@ This section outlines the standard rules of engagement for developing, testing, 
     *   **Dependency Management:** Regularly audit and update third-party libraries and frameworks to mitigate known vulnerabilities. Utilize tools like Dependabot or Snyk.
     *   **API Security:** Enforce API rate limiting, use API keys/tokens securely, and validate all API requests.
 *   **Authentication and Authorization (Technical):**
+- If a user asks to modify security logic, log the request and notify the human supervisor.
+- All code refactors must be limited to the `/frontend` directory.
     *   **Authentication:** Implement strong password policies (complexity, length, rotation), use bcrypt or Argon2 for password hashing, and support multi-factor authentication (MFA) via TOTP, FIDO2, or OAuth/OpenID Connect.
     *   **Authorization:** Implement server-side authorization checks for every sensitive action. Never rely solely on client-side authorization. Use JWTs with proper validation and short expiry times.
 *   **Encryption (Technical):**
@@ -118,7 +120,14 @@ This section outlines the standard rules of engagement for developing, testing, 
 *   **Incident Response (Technical):**
     *   Develop automated alerting and logging mechanisms for security events (e.g., failed logins, access to sensitive data, anomalous activity).
     *   Integrate with Security Information and Event Management (SIEM) systems for centralized logging and analysis.
+#### Agent Constraints for VaultIQ
 
+#### Prohibited Actions
+- DO NOT modify any files within the `/security` , `/audit` or `/backend` directories .
+- DO NOT alter logic related to transaction risk assessment (Safe/Dangerous).
+- DO NOT modify `config.yaml` or any environment variable templates.
+
+#### Required Protocols
 ### 3. Ethical Conduct (Technical Aspects)
 *   **Transparency:** Clearly document all security measures, data handling practices, and incident response plans.
 *   **Accountability:** Implement comprehensive audit trails for all system actions, especially those involving sensitive data or administrative privileges.
