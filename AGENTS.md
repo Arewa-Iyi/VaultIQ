@@ -43,6 +43,8 @@ This project implements a mobile-friendly web application for VaultIQ, a cyberse
 *   `react-router-dom`: DOM bindings for React Router.
 *   `axios`: Promise-based HTTP client for the browser and Node.js.
 
+To run the application please reference START.md
+
 ## Project Structure
 
 The project is organized into two main directories: `backend` and `frontend`.
