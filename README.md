@@ -42,3 +42,5 @@ This project implements a mobile-friendly web application for VaultIQ, a cyberse
 *   `bootstrap`: CSS framework for responsive design.
 *   `react-router-dom`: DOM bindings for React Router.
 *   `axios`: Promise-based HTTP client for the browser and Node.js.
+
+To run the application please reference START.md
