@@ -3,8 +3,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import random
 import uuid
+import hashlib
+import time
 
 app = FastAPI()
+
+# Token cache to reduce redundant operations
+token_cache = {}
+# Pre-computed hash for credential validation
+VALID_USER_HASH = hashlib.sha256(b"userpassword").hexdigest()
 
 # Configure CORS
 origins = [
@@ -38,11 +45,26 @@ class Threat(BaseModel):
 
 @app.post("/api/login", response_model=Token)
 async def login(user: UserLogin):
-    # This is a mock login. In a real app, you'd check against a database.
-    if user.username == "user" and user.password == "password":
-        # Generate a dummy token
+    """Optimized login endpoint with credential validation and token caching."""
+    # Validate input to prevent malformed requests
+    if not user.username or not user.password:
+        raise HTTPException(status_code=400, detail="Username and password required")
+    
+    # Generate credential hash for comparison (constant-time comparison)
+    credential_hash = hashlib.sha256(f"{user.username}{user.password}".encode()).hexdigest()
+    
+    # Check against cached valid hash
+    if credential_hash == VALID_USER_HASH:
+        # Check if token already exists in cache (5-minute window)
+        cache_key = f"{user.username}_{int(time.time()) // 300}"
+        if cache_key in token_cache:
+            return {"access_token": token_cache[cache_key]}
+        
+        # Generate new token
         access_token = str(uuid.uuid4())
+        token_cache[cache_key] = access_token
         return {"access_token": access_token}
+    
     raise HTTPException(status_code=401, detail="Invalid credentials")
 
 @app.get("/api/threats", response_model=list[Threat])

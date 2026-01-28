@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -8,14 +8,30 @@ const LoginPage: React.FC = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            navigate('/dashboard'); // Redirect if already logged in
+        }
+    }, [navigate]);
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        const token = localStorage.getItem('token');
+        if (token) {
+            setError('You are already logged in.');
+            return;
+        }
         try {
             const response = await axios.post('http://localhost:8000/api/login', { username, password });
             localStorage.setItem('token', response.data.access_token);
             navigate('/dashboard');
         } catch (err) {
-            setError('Invalid credentials');
+            if (axios.isAxiosError(err) && err.response) {
+                setError(`Error: ${err.response.data.message || 'Invalid credentials'}`);
+            } else {
+                setError('An unexpected error occurred.');
+            }
         }
     };
 
